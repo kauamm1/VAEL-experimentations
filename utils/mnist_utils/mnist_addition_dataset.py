@@ -126,13 +126,15 @@ class nMNIST(Dataset):
         @param path: path where data are stored
         @return: images and labels, if they exist.
         """
+        
         try:
             print("Loading data...")
-            data = load(path)
+            data = torch.load(path, weights_only=False)            
             print("Loaded.")
-        except:
-            print("No dataset found.")
-
+        except Exception as e:
+            print(f"CRITICAL ERROR loading {path}: {e}")
+            raise
+        
         images = data[self.mode]['images']
         labels = data[self.mode]['labels']
 

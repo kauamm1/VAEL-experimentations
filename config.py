@@ -22,7 +22,7 @@ mnist_vael = dict(
                   'dropout': [0.5],
                   'dropout_ENC': [0.5],
                   'dropout_DEC': [0.5],
-                  'recon_w': [1e-1],
+                  'recon_w': [1.],
                   'kl_w': [1e-5],
                   'query_w': [1.],
                   'sup_w': [0.],

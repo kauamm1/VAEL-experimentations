@@ -310,22 +310,29 @@ def run_mnist_vael(param_grid, exp_class, exp_folder, data_folder, batch_size, d
             start = time()
 
             # Train
-            checkpoint_path, epoch, train_info, validation_info = train_PLVAE(model,
-                                                                              optimizer,
-                                                                              n_epochs=config['max_epoch'],
-                                                                              train_set=train_set,
-                                                                              val_set=val_set,
-                                                                              early_stopping_info=early_stopping_info,
-                                                                              run_ID=str(run_ID),
-                                                                              recon_w=config['recon_w'],
-                                                                              kl_w=config['kl_w'],
-                                                                              query_w=config['query_w'],
-                                                                              sup_w=config['sup_w'],
-                                                                              folder=os.path.join(exp_folder, exp_class,
-                                                                                                  exp_ID),
-                                                                              rec_loss=config['rec_loss'],
-                                                                              train_batch_size=batch_size['train'],
-                                                                              val_batch_size=batch_size['val'])
+            try:
+                checkpoint_path, epoch, train_info, validation_info = train_PLVAE(model,
+                                                                                  optimizer,
+                                                                                  n_epochs=config['max_epoch'],
+                                                                                  train_set=train_set,
+                                                                                  val_set=val_set,
+                                                                                  early_stopping_info=early_stopping_info,
+                                                                                  run_ID=str(run_ID),
+                                                                                  recon_w=config['recon_w'],
+                                                                                  kl_w=config['kl_w'],
+                                                                                  query_w=config['query_w'],
+                                                                                  sup_w=config['sup_w'],
+                                                                                  folder=os.path.join(exp_folder, exp_class,
+                                                                                                      exp_ID),
+                                                                                  rec_loss=config['rec_loss'],
+                                                                                  train_batch_size=batch_size['train'],
+                                                                                  val_batch_size=batch_size['val'])
+            except KeyboardInterrupt:
+                print("\n[SIGINT caught] Training safely halted. Jumping to evaluation with the last checkpoint...")
+                checkpoint_path = os.path.join(exp_folder, exp_class, exp_ID, str(run_ID), 'checkpoint.pt')
+                train_info = np.array([])       
+                validation_info = np.array([])
+                epoch = "Interrupted"
 
             # Timing
             end = time()
@@ -336,7 +343,7 @@ def run_mnist_vael(param_grid, exp_class, exp_folder, data_folder, batch_size, d
             np.save(os.path.join(exp_folder, exp_class, exp_ID, str(run_ID), 'validation_info.npy'), validation_info)
 
             # Load checkpoint
-            last_checkpoint = torch.load(checkpoint_path)
+            last_checkpoint = torch.load(checkpoint_path, weights_only=False)
             model.load_state_dict(last_checkpoint['model'])
             optimizer.load_state_dict(last_checkpoint['optimizer'])
 
