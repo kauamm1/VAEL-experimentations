@@ -136,6 +136,8 @@ class nMNIST(Dataset):
             raise
         
         images = data[self.mode]['images']
+        if images.max() > 1.0:
+            images = images / 255.0
         labels = data[self.mode]['labels']
 
         return images, labels
