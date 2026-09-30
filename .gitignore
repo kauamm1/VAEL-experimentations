@@ -137,3 +137,4 @@ data/MNIST/2mnist_10digits/2mnist_10digits.pt
 
 #Intellij
 .idea
+*.npy
